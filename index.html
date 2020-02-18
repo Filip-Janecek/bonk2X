@@ -98,21 +98,23 @@
         function poNacteni() {
             setInterval(namaluj, 10);
         }
+
         //Websockety...
         const url = 'ws://localhost:8080/';
         const connection = new WebSocket(url);
 
-            // kód pro příjem zprávy
+        // kód pro příjem zprávy
         connection.onmessage = e => {
             console.log(e.data);
         };
 
-            // posílání zpráv
+        // posílání zpráv
         function posli() {
             let z = document.getElementById("zprava").value;
             connection.send(z);
 
         }
+
 
     </script>
 </head>
