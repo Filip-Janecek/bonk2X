@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Bonk</title>
+    <script>
+        let cnv, ctx; //cnv = canva, cx = kontext
+        let x = 200;
+        let y = 100;
+        let img = new Image();
+        img.src = "https://toppng.com/uploads/preview/vector-library-minion-transparent-cartoon-png-image-minion-11562886179jrznot9uat.png";
+        function namaluj() {
+            cnv = document.getElementById("platno");
+            ctx = cnv.getContext("2d"); // z toho vyplývá, že existuje i 3d
+            //ctx.clearRect(0, 0, cnv.width, cnv.height);
+
+            ctx.beginPath();
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = "black";
+            ctx.moveTo(0,0);
+            ctx.lineTo(100,100);
+            ctx.lineTo(100, 500);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(cnv.width/2, cnv.height/2, 200, 0, 2*3.14 );//poslední parametr - radiánech
+            ctx.stroke();
+
+
+            /*if (moveRight) {
+                x++;
+            }
+            if (moveLeft) {
+                x--;
+            }
+            if (moveDown) {
+                y++;
+            }
+            if (moveUp) {
+                y--;
+            }*/
+
+            if (moveRight) {
+                x = x + 5;
+            }
+            if (moveLeft) {
+                x = x - 5;
+            }
+            if (moveDown) {
+                y = y + 5;
+            }
+            if (moveUp) {
+                y = y - 5;
+            }
+
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.fillStyle = " rgba(255, 255, 255, 0.7)";
+            ctx.arc(x, y, 20, 0, 2*3.14 );
+            ctx.fill();
+
+            ctx.drawImage(img, 400, 100, 150, 150);
+
+
+        }
+
+        let moveUp, moveDown, moveLeft, moveRight;
+        function onKeyDown(event) {
+            if(event.key === "ArrowUp"){
+                moveUp = true;
+            }
+            if(event.key === "ArrowDown"){
+                moveDown= true;
+            }
+            if(event.key === "ArrowRight"){
+                moveRight = true;
+            }
+            if(event.key === "ArrowLeft"){
+                moveLeft = true;
+            }
+        }
+
+        function onKeyUp(event) {
+            if(event.key === "ArrowUp"){
+                moveUp = false;
+            }
+            if(event.key === "ArrowDown"){
+                moveDown= false;
+            }
+            if(event.key === "ArrowRight"){
+                moveRight = false;
+            }
+            if(event.key === "ArrowLeft"){
+                moveLeft = false;
+            }
+        }
+        
+        function poNacteni() {
+            setInterval(namaluj, 10);
+        }
+    </script>
+</head>
+<body onload="poNacteni()" onkeydown="onKeyDown(event)" onkeyup="onKeyUp(event)">
+
+<canvas id="platno" width="800" height="600" style="background-color: cadetblue"></canvas>
+
+</body>
+</html>
