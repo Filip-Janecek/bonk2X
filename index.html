@@ -98,9 +98,28 @@
         function poNacteni() {
             setInterval(namaluj, 10);
         }
+        //Websockety...
+        const url = 'ws://localhost:8080/';
+        const connection = new WebSocket(url);
+
+            // kód pro příjem zprávy
+        connection.onmessage = e => {
+            console.log(e.data);
+        };
+
+            // posílání zpráv
+        function posli() {
+            let z = document.getElementById("zprava").value;
+            connection.send(z);
+
+        }
+
     </script>
 </head>
 <body onload="poNacteni()" onkeydown="onKeyDown(event)" onkeyup="onKeyUp(event)">
+
+<input type="text" id="zprava">
+<input type="button" value="pošli" onclick="posli()">
 
 <canvas id="platno" width="800" height="600" style="background-color: cadetblue"></canvas>
 
