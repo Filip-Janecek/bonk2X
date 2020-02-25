@@ -7,14 +7,24 @@
         let cnv, ctx; //cnv = canva, cx = kontext
         let x = 200;
         let y = 100;
+        let xPosl = -1;         //poslední pozice postavy
+        let yPosl = -1;         //poslední pozice postavy
+        let draha = new Array();        //souřadnice, kterými projela postavička - šlo by jednodušše také i jako puze let draha = [];
         let img = new Image();
         img.src = "https://toppng.com/uploads/preview/vector-library-minion-transparent-cartoon-png-image-minion-11562886179jrznot9uat.png";
+        
+        function vzdalenostBodu(bod1, bod2) {
+            let xRozd = Math.abs(bod1.x - bod2.x); //Math.abs není nutné
+            let yRozd = Math.abs(bod1.y - bod2.y);
+            let vzdal = Math.sqrt(xRozd*xRozd + yRozd*yRozd);   // Math.sqrt = druhá odmocnina
+            return vzdal;
+        }
         function namaluj() {
             cnv = document.getElementById("platno");
             ctx = cnv.getContext("2d"); // z toho vyplývá, že existuje i 3d
-            //ctx.clearRect(0, 0, cnv.width, cnv.height);
+            ctx.clearRect(0, 0, cnv.width, cnv.height);
 
-            ctx.beginPath();
+          /*  ctx.beginPath();
             ctx.lineWidth = 5;
             ctx.strokeStyle = "black";
             ctx.moveTo(0,0);
@@ -25,7 +35,7 @@
             ctx.beginPath();
             ctx.arc(cnv.width/2, cnv.height/2, 200, 0, 2*3.14 );//poslední parametr - radiánech
             ctx.stroke();
-
+*/
 
             /*if (moveRight) {
                 x++;
@@ -53,16 +63,57 @@
                 y = y - 5;
             }
 
-            ctx.beginPath();
+            if (x != xPosl || y != yPosl){ //změnila se pozice postavy
+                let obj = {};
+                obj.x = x;
+                obj.y = y;
+                draha.unshift(obj); //vždy na začátek senamu nikoli na konci jako draha.push(obj);
+                xPosl = x;
+                yPosl = y; //jinak by příště znovu nefungovala podmínka
+            }
+            let pocetDrahy = 40;
+            for (let bod of draha) {
+                ctx.beginPath();
+                ctx.lineWidth = 10;
+                ctx.fillStyle = "red";
+                ctx.arc(bod.x, bod.y, 1, 0, 2 * 3.14);
+                ctx.fill();
+                pocetDrahy--;
+                if (pocetDrahy == 0) {
+                    break;
+                }
+            }
+            let bodPredch = {x: -1000, y: -1000};
+
+            let pocetTelicek = 20;
+
+            for (let bod of draha){
+                if(vzdalenostBodu(bod, bodPredch) > 40){
+                    ctx.beginPath();
+                    ctx.lineWidth = 10;
+                    ctx.fillStyle = "black";
+                    ctx.arc(bod.x, bod.y, 10, 0, 2*3.14); // telíčka
+                    ctx.fill();
+                    bodPredch = bod;
+                    pocetTelicek--;
+                    if (pocetTelicek == 0){
+                        break;
+                    }
+
+                }
+            }
+
+           /* ctx.beginPath();
             ctx.lineWidth = 1;
             ctx.fillStyle = " rgba(255, 255, 255, 0.7)";
             ctx.arc(x, y, 20, 0, 2*3.14 );
             ctx.fill();
 
-            ctx.drawImage(img, 400, 100, 150, 150);
+            ctx.drawImage(img, 400, 100, 150, 150);*/
 
 
         }
+
 
         let moveUp, moveDown, moveLeft, moveRight;
         function onKeyDown(event) {
