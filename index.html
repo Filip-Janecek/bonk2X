@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Bonk</title>
     <script>
+        let rotace = 0;
         let cnv, ctx; //cnv = canva, cx = kontext
         let x = 200;
         let y = 100;
@@ -63,7 +64,7 @@
                 y = y - 5;
             }
 
-            if (x != xPosl || y != yPosl){ //změnila se pozice postavy
+            if (x !== xPosl || y !== yPosl){ //změnila se pozice postavy
                 let obj = {};
                 obj.x = x;
                 obj.y = y;
@@ -71,37 +72,60 @@
                 xPosl = x;
                 yPosl = y; //jinak by příště znovu nefungovala podmínka
             }
-            let pocetDrahy = 40;
+            let pocetDrahy = 100;
             for (let bod of draha) {
                 ctx.beginPath();
                 ctx.lineWidth = 10;
-                ctx.fillStyle = "red";
-                ctx.arc(bod.x, bod.y, 1, 0, 2 * 3.14);
+                ctx.fillStyle = "black";
+                ctx.arc(bod.x, bod.y, 2, 1,2 * 3.14);
                 ctx.fill();
                 pocetDrahy--;
-                if (pocetDrahy == 0) {
+                if (pocetDrahy === 0) {
                     break;
                 }
             }
             let bodPredch = {x: -1000, y: -1000};
 
-            let pocetTelicek = 20;
+            let pocetTelicek = 50;
 
+            let napis = true;
             for (let bod of draha){
                 if(vzdalenostBodu(bod, bodPredch) > 40){
                     ctx.beginPath();
-                    ctx.lineWidth = 10;
-                    ctx.fillStyle = "black";
-                    ctx.arc(bod.x, bod.y, 10, 0, 2*3.14); // telíčka
-                    ctx.fill();
+                    ctx.font = "2em Comic-Sans";
+                    ctx.arc(bod.x, bod.y, 2, 0, 2 * 3.14); // telíčka
+
+                    if(napis) {
+                        ctx.lineWidth = 10;
+                        ctx.fillStyle = "black";
+                        ctx.fillText("jojojo", bod.x, bod.y);
+                        napis = false;
+                    }
+
                     bodPredch = bod;
                     pocetTelicek--;
-                    if (pocetTelicek == 0){
+                    if (pocetTelicek === 0){
                         break;
                     }
 
                 }
             }
+
+
+
+            /*ctx.drawImage(img, 300, 200, 50, 50);
+            ctx.fillStyle = "red";
+            ctx.lineWidth = 0.5;
+            ctx.font = "5em Bahnschrift Light";
+            ctx.save();
+            rotace = rotace + 0.01;
+            ctx.rotate(rotace);
+            ctx.translate(300,200);
+            ctx.fillText("šikulka", 0, 0);
+           ctx.restore();
+
+           ctx.drawImage()*/
+
 
            /* ctx.beginPath();
             ctx.lineWidth = 1;
@@ -122,16 +146,19 @@
             }
             if(event.key === "ArrowDown"){
                 moveDown= true;
+
             }
             if(event.key === "ArrowRight"){
                 moveRight = true;
             }
             if(event.key === "ArrowLeft"){
                 moveLeft = true;
+
             }
         }
 
         function onKeyUp(event) {
+
             if(event.key === "ArrowUp"){
                 moveUp = false;
             }
