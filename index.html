@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <title>Bonk</title>
     <script>
+        const R = 10;//poloměr kuličky tělíčka hada
         let rotace = 0;
         let cnv, ctx; //cnv = canva, cx = kontext
         let x = 200;
         let y = 100;
         let xPosl = -1;         //poslední pozice postavy
-        let yPosl = -1;         //poslední pozice postavy
-        let draha = new Array();        //souřadnice, kterými projela postavička - šlo by jednodušše také i jako puze let draha = [];
+        let yPosl = -1;//poslední pozice postavy
+        let prezdivka;
+        let barvaHrace;
+        let draha = new Array(); //souřadnice, kterými projela postavička - šlo by jednodušše také i jako puze let draha = [];
+        let telickovaDraha = [];
         let img = new Image();
         img.src = "https://toppng.com/uploads/preview/vector-library-minion-transparent-cartoon-png-image-minion-11562886179jrznot9uat.png";
         
@@ -19,6 +23,13 @@
             let yRozd = Math.abs(bod1.y - bod2.y);
             let vzdal = Math.sqrt(xRozd*xRozd + yRozd*yRozd);   // Math.sqrt = druhá odmocnina
             return vzdal;
+        }
+        
+        function nastavHrace() {
+            prezdivka = document.getElementById("prezdivka").value;
+            barvaHrace = document.getElementById("barva").value;
+
+
         }
         function namaluj() {
             cnv = document.getElementById("platno");
@@ -54,51 +65,93 @@
             if (moveRight) {
                 x = x + 5;
             }
-            if (moveLeft) {
+            else if (moveLeft) {
                 x = x - 5;
             }
-            if (moveDown) {
+            else if (moveDown) {
                 y = y + 5;
             }
-            if (moveUp) {
+            else if (moveUp) {
                 y = y - 5;
+            } /*else {
+
+              x++;
+            }*/
+            /* //Tvrdé hranice
+            if (x < R ){
+                x=R;
             }
+
+            if (x > cnv.width - R){
+                x=cnv.width - R;
+            }
+
+            if (y < R ){
+                y=R;
+            }
+
+            if (y > cnv.height - R){
+                y = cnv.height - R;
+            }*/
+
+            if (x < R ){
+                x=cnv.width - R;
+            }
+
+            if (x > cnv.width - R){
+                x= R;
+            }
+
+            if (y < R ){
+                y = cnv.height - R;
+            }
+
+            if (y > cnv.height - R){
+                y=R;
+            }
+
+
 
             if (x !== xPosl || y !== yPosl){ //změnila se pozice postavy
                 let obj = {};
                 obj.x = x;
                 obj.y = y;
                 draha.unshift(obj); //vždy na začátek senamu nikoli na konci jako draha.push(obj);
+                telickovaDraha.unshift(obj);
                 xPosl = x;
                 yPosl = y; //jinak by příště znovu nefungovala podmínka
             }
             let pocetDrahy = 100;
-            for (let bod of draha) {
+           /* for (let bod of draha) {
                 ctx.beginPath();
-                ctx.lineWidth = 10;
-                ctx.fillStyle = "black";
-                ctx.arc(bod.x, bod.y, 2, 1,2 * 3.14);
+                //ctx.lineWidth = 10000000;
+                //ctx.fillStyle = barvaHrace;
+                //ctx.arc(bod.x, bod.y, R, 1,2 * 3.14);
                 ctx.fill();
                 pocetDrahy--;
                 if (pocetDrahy === 0) {
                     break;
                 }
-            }
+            }*/
             let bodPredch = {x: -1000, y: -1000};
 
-            let pocetTelicek = 50;
+            let pocetTelicek = 10;
 
             let napis = true;
-            for (let bod of draha){
-                if(vzdalenostBodu(bod, bodPredch) > 40){
+
+            for (let bod of telickovaDraha){
+                if(vzdalenostBodu(bod, bodPredch) > 10){
                     ctx.beginPath();
-                    ctx.font = "2em Comic-Sans";
-                    ctx.arc(bod.x, bod.y, 2, 0, 2 * 3.14); // telíčka
+                    //ctx.arc(bod.x, bod.y, R, 0, 2 * 3.14); // telíčka
+                    ctx.arc(bod.x, bod.y, R, 1,2 * 3.14);
+                    ctx.fill();
+                    ctx.fillStyle = barvaHrace;
 
                     if(napis) {
+                        ctx.font = "20px Arial";
                         ctx.lineWidth = 10;
-                        ctx.fillStyle = "black";
-                        ctx.fillText("jojojo", bod.x, bod.y);
+                        ctx.fillStyle = barvaHrace;
+                        ctx.fillText(prezdivka, bod.x, bod.y);
                         napis = false;
                     }
 
@@ -143,21 +196,38 @@
         function onKeyDown(event) {
             if(event.key === "ArrowUp"){
                 moveUp = true;
+                moveDown = false;
+                moveRight = false;
+                moveLeft = false;
             }
             if(event.key === "ArrowDown"){
                 moveDown= true;
-
+                moveUp = false;
+                moveRight = false;
+                moveLeft = false;
             }
             if(event.key === "ArrowRight"){
                 moveRight = true;
+                moveLeft = false;
+                moveUp = false;
+                moveDown = false;
             }
             if(event.key === "ArrowLeft"){
                 moveLeft = true;
-
+                moveRight = false;
+                moveUp = false;
+                moveDown = false;
             }
+            if(event.key === "ArrowUp" && event.key === "ArrowRight"){
+                moveUp = true;
+                moveDown = false;
+                moveRight = true;
+                moveLeft = false;
+            }
+
         }
 
-        function onKeyUp(event) {
+        /*function onKeyUp(event) {
 
             if(event.key === "ArrowUp"){
                 moveUp = false;
@@ -171,7 +241,7 @@
             if(event.key === "ArrowLeft"){
                 moveLeft = false;
             }
-        }
+        }*/
         
         function poNacteni() {
             setInterval(namaluj, 10);
@@ -199,7 +269,12 @@
 <body onload="poNacteni()" onkeydown="onKeyDown(event)" onkeyup="onKeyUp(event)">
 
 <input type="text" id="zprava">
-<input type="button" value="pošli" onclick="posli()">
+<input type="button" value="pošli" onclick="posli()"><br><br>
+
+
+<input type="text" id="prezdivka">
+<input type="color" id="barva" value="#DC143C">
+<input type="button" value="pošli" onclick="nastavHrace()"><br><br>
 
 <canvas id="platno" width="800" height="600" style="background-color: cadetblue"></canvas>
 
